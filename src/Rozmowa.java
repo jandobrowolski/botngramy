@@ -1,8 +1,8 @@
-
 import java.util.ArrayList;
 import java.util.Random;
-import static jdk.nashorn.internal.objects.NativeFunction.function;
-
+import javax.swing.JButton;
+import Bot.Ngram;
+import Bot.Generate;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -19,18 +19,12 @@ public class Rozmowa extends javax.swing.JPanel {
 	 * Creates new form Rozmowa
 	 */
 	public Rozmowa() {
-		this.ngram = new ArrayList();
+		this.ngram = new Ngram();
+		this.generator = new Generate();
 		initComponents();
-		ngram.add(input.getText());
-		ngram.add("czesc");
-		ngram.add("jak");
-		ngram.add("sie");
-		ngram.add("masz");
-		ngram.add("dzien");
-		ngram.add("dobry");
-		ngram.add("pa");
 	}
-
+	Ngram ngram;
+	Generate generator;
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,66 +78,23 @@ public class Rozmowa extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(74, 74, 74))))
         );
     }// </editor-fold>//GEN-END:initComponents
-	
-	ArrayList<String> ngram;
-	ArrayList<String> wyniki;
-    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-		
-		generate();
-		
-    }//GEN-LAST:event_button1ActionPerformed
 
-	private int generate()
-	{
-		this.wyniki = new ArrayList();
-		ArrayList<Integer> wyszukane = new ArrayList();
-		Random generator = new Random(); 
-		int ktorywyraz = generator.nextInt(ngram.size());
-		
-		display.setText(ngram.get(ktorywyraz));
-		
-		while(wyniki.size() < 15 && ktorywyraz+1 < ngram.size())
-		{
-			int znalezione = 0;
-			wyszukane.clear();
-			for (int i=0; i<ngram.size(); i++)
-			{
-				if((ngram.get(i)).equals(ngram.get(ktorywyraz)))
-				{
-					wyszukane.add(znalezione, i);
-					znalezione++;
-				}
-			}
-			if(znalezione!=0)
-			{
-				ktorywyraz = wyszukane.get(generator.nextInt(znalezione));
-				while(ngram.get(ktorywyraz+1).endsWith("?"))
-					ktorywyraz = wyszukane.get(generator.nextInt(znalezione));
-				for(int i=1; i<2 ; i++)
-				{
-					wyniki.add(ngram.get(ktorywyraz+i));
-				}
-				ktorywyraz = ktorywyraz + 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		wyniki.stream().forEach((_item) -> {
-			display.setText(display.getText() + " " +_item);
-		});
-		return 0;
-	}
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+		ngram.addBase((input.getText()).split(" "));
+		generator.work(ngram);
+		input.setText("");
+		display.setText(ngram.getResult());
+		ngram.clearResult();
+    }//GEN-LAST:event_button1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button button1;
@@ -152,4 +103,6 @@ public class Rozmowa extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
+
+    private javax.swing.JButton ppp;
 }
